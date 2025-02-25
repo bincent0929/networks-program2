@@ -60,10 +60,6 @@ int main( int argc, char *argv[] ) {
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
-                    break;
-                }
-                else {
-                    break;
                 }
             }
             else {
@@ -71,9 +67,6 @@ int main( int argc, char *argv[] ) {
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
-                }
-                else {
-                    break;
                 }
             }
         }
@@ -86,10 +79,6 @@ int main( int argc, char *argv[] ) {
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
-                    break;
-                }
-                else {
-                    break;
                 }
             }
             else {
@@ -97,9 +86,6 @@ int main( int argc, char *argv[] ) {
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
-                }
-                else {
-                    break;
                 }
             }
         }
