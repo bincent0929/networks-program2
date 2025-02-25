@@ -43,33 +43,74 @@ int main( int argc, char *argv[] ) {
 
     printf("Are you done with the program? (y/n): \n");
     scanf("%c", yesOrNo);
-
-    // I need to put this in a loop for the exit question
     if (yesOrNo == 'y') {
         close( s );
         return 0;
     }
-    else {
+    while (1) {
         printf("Do you want to join a peer?: \n");
         scanf("%c", yesOrNo);
         if (yesOrNo == 'y') {
             join();
+            printf("Do you want to publish your info?: \n");
+            scanf("%c", yesOrNo);
+            if (yesOrNo == 'y') {
+                publish();
+                printf("Do you want to search?: \n");
+                scanf("%c", yesOrNo);
+                if (yesOrNo == 'y') {
+                    search();
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
+            else {
+                printf("Do you want to search?: \n");
+                scanf("%c", yesOrNo);
+                if (yesOrNo == 'y') {
+                    search();
+                }
+                else {
+                    break;
+                }
+            }
         }
         else {
             printf("Do you want to publish your info?: \n");
             scanf("%c", yesOrNo);
             if (yesOrNo == 'y') {
-
+                publish();
+                printf("Do you want to search?: \n");
+                scanf("%c", yesOrNo);
+                if (yesOrNo == 'y') {
+                    search();
+                    break;
+                }
+                else {
+                    break;
+                }
             }
             else {
-                search();
+                printf("Do you want to search?: \n");
+                scanf("%c", yesOrNo);
+                if (yesOrNo == 'y') {
+                    search();
+                }
+                else {
+                    break;
+                }
             }
         }
-    }
-    
-    close( s );
 
-	return 0;
+        printf("Are you done with the program? (y/n): \n");
+        scanf("%c", yesOrNo);
+        if (yesOrNo == 'y') {
+            close( s );
+            return 0;
+        }
+    }
 }
 
 /**********************************************
