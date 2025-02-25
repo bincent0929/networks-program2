@@ -17,12 +17,16 @@
  * the returned socket.
  */
 int lookup_and_connect( const char *host, const char *service );
+void join();
+void publish();
+void search();
 
 int main( int argc, char *argv[] ) {
 	char *host;
 	char buf[MAX_LINE];
 	int s;
 	int len;
+    char yesOrNo;
 
 	if ( argc == 2 ) {
 		host = argv[1];
@@ -37,11 +41,61 @@ int main( int argc, char *argv[] ) {
 		exit( 1 );
 	}
 
-	
+    printf("Are you done with the program? (y/n): \n");
+    scanf("%c", yesOrNo);
 
-	close( s );
+    // I need to put this in a loop for the exit question
+    if (yesOrNo == 'y') {
+        close( s );
+        return 0;
+    }
+    else {
+        printf("Do you want to join a peer?: \n");
+        scanf("%c", yesOrNo);
+        if (yesOrNo == 'y') {
+            join();
+        }
+        else {
+            printf("Do you want to publish your info?: \n");
+            scanf("%c", yesOrNo);
+            if (yesOrNo == 'y') {
+
+            }
+            else {
+                search();
+            }
+        }
+    }
+    
+    close( s );
 
 	return 0;
+}
+
+/**********************************************
+ * sends the action number and peer ID to the receiver
+**********************************************/
+void join() {
+
+}
+
+/**********************************************
+ * opens, read, then counts the "SharedFiles"
+ * then sends to the receiver (htonl?)
+**********************************************/
+void publish() {
+
+}
+
+/**********************************************
+ * prepares the query to send to the receiver
+ * then receives the query from the other machine
+ * extracts the ID, IP, and Port#
+ * then goes back and asks if exiting
+**********************************************/
+void search() {
+
+
 }
 
 int lookup_and_connect( const char *host, const char *service ) {
