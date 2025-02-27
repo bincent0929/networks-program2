@@ -18,8 +18,13 @@
  * the returned socket.
  */
 int lookup_and_connect( const char *host, const char *service );
-/*
- * sends the action number and peer ID to the receiver
+/**
+ * sends the join request to the registry to join the network
+ * only needs to happen once per program run
+ * sends a 1 byte field of 0, then a 4 byte peer ID
+ * The peer ID must be in network byte order
+ * each peer ID must be unique and 
+ * is provided by a command line argument
 */
 void join();
 /*
@@ -55,62 +60,7 @@ int main( int argc, char *argv[] ) {
 		exit( 1 );
 	}
 
-    printf("Are you done with the program? (y/n): \n");
-    scanf("%c", yesOrNo);
-    if (yesOrNo == 'y') {
-        close( s );
-        return 0;
-    }
-    while (1) {
-        printf("Do you want to join a peer? (y/n): \n");
-        scanf("%c", yesOrNo);
-        if (yesOrNo == 'y') {
-            join();
-            printf("Do you want to publish your info? (y/n): \n");
-            scanf("%c", yesOrNo);
-            if (yesOrNo == 'y') {
-                publish();
-                printf("Do you want to search? (y/n): \n");
-                scanf("%c", yesOrNo);
-                if (yesOrNo == 'y') {
-                    search();
-                }
-            }
-            else {
-                printf("Do you want to search? (y/n): \n");
-                scanf("%c", yesOrNo);
-                if (yesOrNo == 'y') {
-                    search();
-                }
-            }
-        }
-        else {
-            printf("Do you want to publish your info? (y/n): \n");
-            scanf("%c", yesOrNo);
-            if (yesOrNo == 'y') {
-                publish();
-                printf("Do you want to search? (y/n): \n");
-                scanf("%c", yesOrNo);
-                if (yesOrNo == 'y') {
-                    search();
-                }
-            }
-            else {
-                printf("Do you want to search? (y/n): \n");
-                scanf("%c", yesOrNo);
-                if (yesOrNo == 'y') {
-                    search();
-                }
-            }
-        }
-
-        printf("Are you done with the program? (y/n): \n");
-        scanf("%c", yesOrNo);
-        if (yesOrNo == 'y') {
-            close( s );
-            return 0;
-        }
-    }
+    
 }
 
 void join() {
