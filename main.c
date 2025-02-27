@@ -17,8 +17,21 @@
  * the returned socket.
  */
 int lookup_and_connect( const char *host, const char *service );
+/*
+ * sends the action number and peer ID to the receiver
+*/
 void join();
+/*
+ * opens, read, then counts the "SharedFiles"
+ * then sends to the receiver (htonl?)
+*/
 void publish();
+/*
+ * prepares the query to send to the receiver
+ * then receives the query from the other machine
+ * extracts the ID, IP, and Port#
+ * then goes back and asks if exiting
+*/
 void search();
 
 int main( int argc, char *argv[] ) {
@@ -48,22 +61,22 @@ int main( int argc, char *argv[] ) {
         return 0;
     }
     while (1) {
-        printf("Do you want to join a peer?: \n");
+        printf("Do you want to join a peer? (y/n): \n");
         scanf("%c", yesOrNo);
         if (yesOrNo == 'y') {
             join();
-            printf("Do you want to publish your info?: \n");
+            printf("Do you want to publish your info? (y/n): \n");
             scanf("%c", yesOrNo);
             if (yesOrNo == 'y') {
                 publish();
-                printf("Do you want to search?: \n");
+                printf("Do you want to search? (y/n): \n");
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
                 }
             }
             else {
-                printf("Do you want to search?: \n");
+                printf("Do you want to search? (y/n): \n");
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
@@ -71,18 +84,18 @@ int main( int argc, char *argv[] ) {
             }
         }
         else {
-            printf("Do you want to publish your info?: \n");
+            printf("Do you want to publish your info? (y/n): \n");
             scanf("%c", yesOrNo);
             if (yesOrNo == 'y') {
                 publish();
-                printf("Do you want to search?: \n");
+                printf("Do you want to search? (y/n): \n");
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
                 }
             }
             else {
-                printf("Do you want to search?: \n");
+                printf("Do you want to search? (y/n): \n");
                 scanf("%c", yesOrNo);
                 if (yesOrNo == 'y') {
                     search();
@@ -99,27 +112,14 @@ int main( int argc, char *argv[] ) {
     }
 }
 
-/**********************************************
- * sends the action number and peer ID to the receiver
-**********************************************/
 void join() {
 
 }
 
-/**********************************************
- * opens, read, then counts the "SharedFiles"
- * then sends to the receiver (htonl?)
-**********************************************/
 void publish() {
 
 }
 
-/**********************************************
- * prepares the query to send to the receiver
- * then receives the query from the other machine
- * extracts the ID, IP, and Port#
- * then goes back and asks if exiting
-**********************************************/
 void search() {
 
 
