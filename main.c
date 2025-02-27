@@ -27,16 +27,29 @@ int lookup_and_connect( const char *host, const char *service );
  * is provided by a command line argument
 */
 void join();
-/*
- * opens, read, then counts the "SharedFiles"
- * then sends to the receiver (htonl?)
+/**
+ * Informs the registry of what files are available to share
+ * opens, read, then counts the files in the "SharedFiles" directory
+ * any files in the directory are then added to the registry index
+ * 1 byte for action = 1, 4 bytes for the file count, variable bytes of null terminated for the file names
+ * must contain Count file names in total with exactly NULL characters
+ * Count must be in network byte order
+ * each filename is at most 100 bytes (including NULL)
+ * no unused bytes between filenames
+ * a publish cannot be larger than 1200 bytes (12 files)
 */
 void publish();
-/*
- * prepares the query to send to the receiver
- * then receives the query from the other machine
- * extracts the ID, IP, and Port#
- * then goes back and asks if exiting
+/**
+ * look for peers with a desired filename
+ * a request with the name of the file is sent from the peer
+ * the registry sends a search response after it receives a search request
+ * the response indicates that another peer has the file requested
+ * if the peer is looking for a file published by the peer, it won't locate it
+ * a search request has 1 byte containing 2, then variable bytes for the desired null-terminated filename
+ * a search response (sent from the registry to the requesting peer) contains
+ * 4 bytes for a peer ID, 4 bytes for an IPv4 address, and 2 bytes for a peer port
+ * if the file is not found, then the response will contain zeros (or if the peer themself has the file)
+ * user inputs the name of the file on a newline after SEARCH is entered
 */
 void search();
 
@@ -60,7 +73,7 @@ int main( int argc, char *argv[] ) {
 		exit( 1 );
 	}
 
-    
+
 }
 
 void join() {
