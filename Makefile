@@ -1,3 +1,6 @@
+# Group Members: Vincent Roberson and Muhammad I Sohail
+# ECEE 446 Section 1
+# Spring 2025
 EXE = peer
 CFLAGS = -Wall
 CXXFLAGS = -Wall
