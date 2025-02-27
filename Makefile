@@ -1,4 +1,4 @@
-EXE = h1-counter
+EXE = peer
 CFLAGS = -Wall
 CXXFLAGS = -Wall
 LDLIBS =
@@ -10,13 +10,13 @@ all: $(EXE)
 
 # Implicit rules defined by Make, but you can redefine if needed
 #
-#h1-counter: h1-counter.c
-#	$(CC) $(CFLAGS) h1-counter.c $(LDLIBS) -o h1-counter
+#peer: peer.c
+#	$(CC) $(CFLAGS) peer.c $(LDLIBS) -o peer
 #
 # OR
 #
-#h1-counter: h1-counter.cc
-#	$(CXX) $(CXXFLAGS) h1-counter.cc $(LDLIBS) -o h1-counter
+#peer: peer.cc
+#	$(CXX) $(CXXFLAGS) peer.cc $(LDLIBS) -o peer
 
 .PHONY: clean
 clean:
