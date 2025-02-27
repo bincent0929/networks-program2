@@ -31,7 +31,7 @@ int lookup_and_connect( const char *host, const char *service );
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join();
+void join(void *buf);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
@@ -83,7 +83,7 @@ int main( int argc, char *argv[] ) {
 		fprint("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(userChoice == "JOIN") {
-			join();
+			join(buf);
 			continue;
 		}
 		else if (userChoice == "PUBLISH") {
@@ -116,8 +116,11 @@ int main( int argc, char *argv[] ) {
 
 }
 
-void join() {
+void join(void *buf) {
+	fprint("What four character/integer Peer ID do you want?: \n");
+	scanf("%s", buf);
 
+	send()
 }
 
 void publish() {
@@ -125,8 +128,7 @@ void publish() {
 }
 
 void search() {
-
-
+	
 }
 
 int lookup_and_connect( const char *host, const char *service ) {
