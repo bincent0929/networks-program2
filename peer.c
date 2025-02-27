@@ -119,8 +119,7 @@ int main( int argc, char *argv[] ) {
 void join(void *buf) {
 	fprint("What four character/integer Peer ID do you want?: \n");
 	scanf("%s", buf);
-
-	send()
+	// maybe I should store it in a string then move it into buffer
 }
 
 void publish() {
