@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #define SERVER_PORT "5432"
 #define MAX_LINE 256
@@ -62,7 +63,8 @@ int main( int argc, char *argv[] ) {
 	char buf[MAX_LINE];
 	int s;
 	int len;
-    char yesOrNo;
+    char userChoice;
+	bool hasJoined = false;
 
 	if ( argc == 2 ) {
 		host = argv[1];
@@ -77,6 +79,40 @@ int main( int argc, char *argv[] ) {
 		exit( 1 );
 	}
 
+	while(1) {
+		fprint("What would you like to do?: \n");
+		scanf("%s", userChoice);
+		if(userChoice == "JOIN") {
+			join();
+			continue;
+		}
+		else if (userChoice == "PUBLISH") {
+			if (hasJoined == true) {
+				publish();
+				continue;
+			}
+			else {
+				fprint("You must join before you can publish \n");
+				continue;
+			}
+		}
+		else if (userChoice == "SEARCH") {
+			if (hasJoined == true) {
+				search();
+				continue;
+			}
+			else {
+				fprint("You must join before you can search \n");
+				continue;
+			}
+		}
+		else if (userChoice == "EXIT") {
+			close( s );
+			// closes the socket
+			return 0;
+			// ends program
+		}
+	}
 
 }
 
