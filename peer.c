@@ -31,7 +31,7 @@ int lookup_and_connect( const char *host, const char *service );
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join(char *buf);
+void join(int *s, char *buf);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
@@ -116,9 +116,18 @@ int main( int argc, char *argv[] ) {
 
 }
 
-void join(char *buf) {
+void join(int *s, char *buf) {
+	char userID[4];
 	buf[0] = '0';
-	
+	// sets the first byte to 0
+	fprint("What four byte character Peer ID do you want?: \n");
+	scanf("%s", userID);
+	for (int i = 1; i < 4; i++) {
+		buf[i] = userID[i - 1];
+	}
+	send(s, buf, 5, 0);
+	// don't think this needs to be cleared
+	// it can just be overwritten by the next function
 }
 
 void publish() {
