@@ -91,7 +91,7 @@ int main( int argc, char *argv[] ) {
 		}
 		else if (userChoice == "PUBLISH") {
 			if (hasJoined == true) {
-				publish();
+				publish(s, buf);
 				continue;
 			}
 			else {
@@ -134,18 +134,25 @@ void join(int *s, char *buf) {
 }
 
 void publish(int *s, char *buf) {
+	int count = 0;
+	int fileNameOffset = 5;
+	// Where I got this:
+	// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
 	DIR *d;
 	struct dirent *dir;
 	d = opendir("SharedFiles");
 	while ((dir = readdir(d)) != NULL) {
 		// the name will be accessed through
 		// dir->d_name
+		count++;
+		// Where I go this
+		// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
+		strcpy(buf[fileNameOffset], dir->d_name);
+		fileNameOffset += strlen(dir->d_name);
 	}
 	closedir(d);
 
-	int count = 0;
 	buf[0] = '1';
-	
 	// Where I got this:
 	// https://chatgpt.com/share/67c8a948-48d4-800a-848d-e78a29c89193
 	buf[1] = (count >> 24) & 0xFF; // most significant
