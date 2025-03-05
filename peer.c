@@ -1,4 +1,4 @@
-/** q
+/** 
  * Group Members: Vincent Roberson and Muhammad I Sohail
  * ECEE 446 Section 1
  * Spring 2025
@@ -127,8 +127,46 @@ void publish() {
 
 }
 
-void search() {
-	
+void search(int sockfd) {
+    char filename[MAX_LINE];
+    printf("Enter a file name: ");
+    scanf("%s", filename);
+    
+    size_t filename_len = strlen(filename) + 2;
+    char *search_request = malloc(filename_len);
+    if (!search_request) {
+        perror("malloc");
+        return;
+    }
+    search_request[0] = 0x02;
+    strcpy(search_request + 1, filename);
+    
+    send(sockfd, search_request, filename_len, 0);
+    free(search_request);
+    
+    char response[10];
+    if (recv(sockfd, response, sizeof(response), 0) == -1) {
+        perror("recv");
+        return;
+    }
+    
+    uint32_t peer_id, peer_ip;
+    uint16_t peer_port;
+    memcpy(&peer_id, response, 4);
+    memcpy(&peer_ip, response + 4, 4);
+    memcpy(&peer_port, response + 8, 2);
+    
+    peer_id = ntohl(peer_id);
+    peer_ip = ntohl(peer_ip);
+    peer_port = ntohs(peer_port);
+    
+    if (peer_id == 0 && peer_ip == 0 && peer_port == 0) {
+        printf("File not indexed by registry\n");
+    } else {
+        struct in_addr ip_addr;
+        ip_addr.s_addr = peer_ip;
+        printf("File found at\nPeer %u\n%s:%u\n", peer_id, inet_ntoa(ip_addr), peer_port);
+    }
 }
 
 int lookup_and_connect( const char *host, const char *service ) {
