@@ -25,7 +25,7 @@
  * Returns a connected socket descriptor or -1 on error. Caller is responsible for closing
  * the returned socket.
  */
-int lookup_and_connect( const char *host, const char *service );
+int lookup_and_connect(const char *host, const char *service);
 /**
  * sends the join request to the registry to join the network
  * only needs to happen once per program run
@@ -61,7 +61,7 @@ void publish(int *s, char *buf);
 */
 void search(int *s, char *buf);
 
-int main( int argc, char *argv[] ) {
+int main(int argc, char *argv[]) {
 	char *host;
 	char buf[MAX_SIZE];
 	int s;
