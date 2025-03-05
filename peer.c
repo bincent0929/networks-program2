@@ -59,7 +59,7 @@ void publish(int *s, char *buf);
  * if the file is not found, then the response will contain zeros (or if the peer themself has the file)
  * user inputs the name of the file on a newline after SEARCH is entered
 */
-void search();
+void search(int *s, char *buf);
 
 int main( int argc, char *argv[] ) {
 	char *host;
@@ -162,7 +162,7 @@ void publish(int *s, char *buf) {
 	send(s, buf, 1200, 0);
 }
 
-void search() {
+void search(int *s, char *buf) {
 	
 }
 
