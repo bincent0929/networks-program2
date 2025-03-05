@@ -13,7 +13,7 @@
 #include <stdbool.h>
 
 #define SERVER_PORT "5432"
-#define MAX_LINE 256
+#define MAX_SIZE 1200
 
 /*
  * Lookup a host IP address and connect to it using service. Arguments match the first two
@@ -60,7 +60,7 @@ void search();
 
 int main( int argc, char *argv[] ) {
 	char *host;
-	char buf[MAX_LINE];
+	char buf[MAX_SIZE];
 	int s;
 	int len;
     char userChoice;
@@ -83,7 +83,7 @@ int main( int argc, char *argv[] ) {
 		fprint("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(userChoice == "JOIN") {
-			join(buf);
+			join(s, buf);
 			continue;
 		}
 		else if (userChoice == "PUBLISH") {
@@ -130,8 +130,17 @@ void join(int *s, char *buf) {
 	// it can just be overwritten by the next function
 }
 
-void publish() {
+void publish(int *s, char *buf) {
+	int count = 0;
+	buf[0] = '1';
 
+	// Where I got this:
+	// https://chatgpt.com/share/67c8a948-48d4-800a-848d-e78a29c89193
+	buf[1] = (count >> 24) & 0xFF; // most significant
+	buf[2] = (count >> 16) & 0xFF;
+	buf[3] = (count >> 8) & 0xFF;
+	buf[4] = count & 0xFF; // least significant
+	send(s, buf, 1200, 0);
 }
 
 void search() {
