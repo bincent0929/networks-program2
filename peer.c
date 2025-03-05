@@ -101,7 +101,7 @@ int main( int argc, char *argv[] ) {
 		}
 		else if (userChoice == "SEARCH") {
 			if (hasJoined == true) {
-				search();
+				search(s, buf);
 				continue;
 			}
 			else {
