@@ -46,7 +46,7 @@ void join(int *s, char *buf);
  * no unused bytes between filenames
  * a publish cannot be larger than 1200 bytes (12 files)
 */
-void publish();
+void publish(int *s, char *buf);
 /**
  * look for peers with a desired filename
  * a request with the name of the file is sent from the peer
