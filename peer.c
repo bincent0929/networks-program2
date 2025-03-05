@@ -11,6 +11,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
+// for reading file names in a direcory
+// needed for the publish function
+#include <dirent.h>
 
 #define SERVER_PORT "5432"
 #define MAX_SIZE 1200
@@ -131,9 +134,18 @@ void join(int *s, char *buf) {
 }
 
 void publish(int *s, char *buf) {
+	DIR *d;
+	struct dirent *dir;
+	d = opendir("SharedFiles");
+	while ((dir = readdir(d)) != NULL) {
+		// the name will be accessed through
+		// dir->d_name
+	}
+	closedir(d);
+
 	int count = 0;
 	buf[0] = '1';
-
+	
 	// Where I got this:
 	// https://chatgpt.com/share/67c8a948-48d4-800a-848d-e78a29c89193
 	buf[1] = (count >> 24) & 0xFF; // most significant
