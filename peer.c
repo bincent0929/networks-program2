@@ -63,14 +63,13 @@ void search(int *s, char *buf);
 
 int main(int argc, char *argv[]) {
 	char *host;
-	int server_port;
-	uint32_t peerID;
+	char *server_port;
 	char buf[MAX_SIZE];
 	int s;
     char userChoice[10];
 	bool hasJoined = false;
 
-	if ( argc == 4 ) {
+	if ( argc == 3 ) {
 		host = argv[1];
 		server_port = atoi(argv[2]);
 		peerID = atoi(argv[3]);
