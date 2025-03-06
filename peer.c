@@ -123,12 +123,7 @@ int main(int argc, char *argv[]) {
 void join(int *s, char *buf) {
 	char userID[4];
 	buf[0] = '0';
-	// sets the first byte to 0
-	fprint("What four byte character Peer ID do you want?: \n");
-	scanf("%s", userID);
-	for (int i = 1; i < 4; i++) {
-		buf[i] = userID[i - 1];
-	}
+	// a 4 byte peer ID needs to be generated here and saved into buf[1] to buf[4]
 	send(s, buf, 5, 0);
 	// don't think this needs to be cleared
 	// it can just be overwritten by the next function
