@@ -15,7 +15,6 @@
 // needed for the publish function
 #include <dirent.h>
 
-#define SERVER_PORT "5432"
 #define MAX_SIZE 1200
 
 /*
@@ -63,14 +62,16 @@ void search(int *s, char *buf);
 
 int main(int argc, char *argv[]) {
 	char *host;
+	char *server_port;
 	char buf[MAX_SIZE];
 	int s;
 	int len;
     char userChoice;
 	bool hasJoined = false;
 
-	if ( argc == 2 ) {
+	if ( argc == 3 ) {
 		host = argv[1];
+		server_port = argv[2];
 	}
 	else {
 		fprintf( stderr, "usage: %s host\n", argv[0] );
@@ -78,7 +79,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/* Lookup IP and connect to server */
-	if ( ( s = lookup_and_connect( host, SERVER_PORT ) ) < 0 ) {
+	if ( ( s = lookup_and_connect( host, server_port ) ) < 0 ) {
 		exit( 1 );
 	}
 
