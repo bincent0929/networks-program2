@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 	uint32_t peerID;
 	char buf[MAX_SIZE];
 	int s;
-    char userChoice;
+    char userChoice[10];
 	bool hasJoined = false;
 
 	if ( argc == 4 ) {
@@ -81,40 +81,44 @@ int main(int argc, char *argv[]) {
 		exit( 1 );
 	}
 
+	// Convert server port to string before passing to lookup_and_connect
+	char port_str[6];
+	snprintf(port_str, sizeof(port_str), "%d", server_port);
+
 	/* Lookup IP and connect to server */
 	if ( ( s = lookup_and_connect( host, server_port ) ) < 0 ) {
 		exit( 1 );
 	}
 
 	while(1) {
-		fprint("What would you like to do?: \n");
-		scanf("%s", userChoice);
-		if(userChoice == "JOIN") {
+		printf("What would you like to do?: \n");
+		scanf("%9s", userChoice);
+		if(strcmp(userChoice, "JOIN") == 0) {
 			join(s, buf, peerID);
 			hasJoined = true;
 			continue;
 		}
-		else if (userChoice == "PUBLISH") {
+		else if (strcmp(userChoice, "PUBLISH") == 0) {
 			if (hasJoined == true) {
 				publish(s, buf);
 				continue;
 			}
 			else {
-				fprint("You must join before you can publish \n");
+				printf("You must join before you can publish \n");
 				continue;
 			}
 		}
-		else if (userChoice == "SEARCH") {
+		else if (strcmp(userChoice, "SEARCH") == 0) {
 			if (hasJoined == true) {
 				search(s, buf);
 				continue;
 			}
 			else {
-				fprint("You must join before you can search \n");
+				printf("You must join before you can search \n");
 				continue;
 			}
 		}
-		else if (userChoice == "EXIT") {
+		else if (strcmp(userChoice, "EXIT") == 0) {
 			close( s );
 			// closes the socket
 			return 0;
