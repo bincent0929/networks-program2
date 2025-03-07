@@ -15,8 +15,7 @@
 // needed for the publish function
 #include <dirent.h>
 
-#define MAX_SIZE 1200 // needs to be this large to storage the file names from publish
-
+#define MAX_SIZE 1200 // needs to be this large to store the file names from publish
 
 /*
  * Lookup a host IP address and connect to it using service. Arguments match the first two
@@ -34,7 +33,6 @@ int lookup_and_connect(const char *host, const char *service);
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join(int *s, char *buf, uint32_t *peerID);
 void join(int *s, char *buf, uint32_t *peerID);
 /**
  * Informs the registry of what files are available to share
