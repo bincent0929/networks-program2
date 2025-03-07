@@ -124,12 +124,14 @@ int main(int argc, char *argv[]) {
 }
 
 void join(int *s, char *buf, uint32_t *peerID) {
-	char userID[4];
-	buf[0] = '0';
-	// a 4 byte peer ID needs to be generated here and saved into buf[1] to buf[4]
+	buf[0] = 0;
+	// apparently a byte of 0 is the null character
+	memcpy(buf + 1, peerID, sizeof(uint32_t));
+	/*
+		this should save the peerID given by the user
+		from buf[1] to buf[4]
+	*/
 	send(s, buf, 5, 0);
-	// don't think this needs to be cleared
-	// it can just be overwritten by the next function
 }
 
 void publish(int *s, char *buf) {
