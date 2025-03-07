@@ -1,4 +1,4 @@
-/** 
+/**
  * Group Members: Vincent Roberson and Muhammad I Sohail
  * ECEE 446 Section 1
  * Spring 2025
@@ -11,9 +11,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
+// for reading file names in a direcory
+// needed for the publish function
+#include <dirent.h>
 
 #define SERVER_PORT "5432"
-#define MAX_LINE 256
+#define MAX_SIZE 1200
 
 /*
  * Lookup a host IP address and connect to it using service. Arguments match the first two
@@ -31,7 +34,7 @@ int lookup_and_connect( const char *host, const char *service );
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join(void *buf);
+void join(int *s, char *buf);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
@@ -43,7 +46,7 @@ void join(void *buf);
  * no unused bytes between filenames
  * a publish cannot be larger than 1200 bytes (12 files)
 */
-void publish();
+void publish(int *s, char *buf);
 /**
  * look for peers with a desired filename
  * a request with the name of the file is sent from the peer
@@ -56,11 +59,11 @@ void publish();
  * if the file is not found, then the response will contain zeros (or if the peer themself has the file)
  * user inputs the name of the file on a newline after SEARCH is entered
 */
-void search();
+void search(int *s, char *buf);
 
 int main( int argc, char *argv[] ) {
 	char *host;
-	char buf[MAX_LINE];
+	char buf[MAX_SIZE];
 	int s;
 	int len;
     char userChoice;
@@ -83,12 +86,12 @@ int main( int argc, char *argv[] ) {
 		fprint("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(userChoice == "JOIN") {
-			join(buf);
+			join(s, buf);
 			continue;
 		}
 		else if (userChoice == "PUBLISH") {
 			if (hasJoined == true) {
-				publish();
+				publish(s, buf);
 				continue;
 			}
 			else {
@@ -98,7 +101,7 @@ int main( int argc, char *argv[] ) {
 		}
 		else if (userChoice == "SEARCH") {
 			if (hasJoined == true) {
-				search();
+				search(s, buf);
 				continue;
 			}
 			else {
@@ -116,56 +119,93 @@ int main( int argc, char *argv[] ) {
 
 }
 
-void join(void *buf) {
-	fprint("What four character/integer Peer ID do you want?: \n");
-	scanf("%s", buf);
-
-	send()
+void join(int *s, char *buf) {
+	char userID[4];
+	buf[0] = '0';
+	// sets the first byte to 0
+	fprint("What four byte character Peer ID do you want?: \n");
+	scanf("%s", userID);
+	for (int i = 1; i < 4; i++) {
+		buf[i] = userID[i - 1];
+	}
+	send(s, buf, 5, 0);
+	// don't think this needs to be cleared
+	// it can just be overwritten by the next function
 }
 
-void publish() {
+void publish(int *s, char *buf) {
+	int count = 0;
+	int fileNameOffset = 5;
+	// Where I got this:
+	// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
+	DIR *d;
+	struct dirent *dir;
+	d = opendir("SharedFiles");
+	while ((dir = readdir(d)) != NULL) {
+		// the name will be accessed through
+		// dir->d_name
+		count++;
+		// Where I go this
+		// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
+		strcpy(buf[fileNameOffset], dir->d_name);
+		fileNameOffset += strlen(dir->d_name);
+	}
+	closedir(d);
 
+	buf[0] = '1';
+	// Where I got this:
+	// https://chatgpt.com/share/67c8a948-48d4-800a-848d-e78a29c89193
+	buf[1] = (count >> 24) & 0xFF; // most significant
+	buf[2] = (count >> 16) & 0xFF;
+	buf[3] = (count >> 8) & 0xFF;
+	buf[4] = count & 0xFF; // least significant
+	send(s, buf, 1200, 0);
 }
 
-void search(int sockfd) {
-    char filename[MAX_LINE];
+void search(int *s, char *buf) {
+    char filename[100]; // Maximum file name size including NULL terminator
+
     printf("Enter a file name: ");
     scanf("%s", filename);
-    
-    size_t filename_len = strlen(filename) + 2;
-    char *search_request = malloc(filename_len);
-    if (!search_request) {
-        perror("malloc");
-        return;
-    }
-    search_request[0] = 0x02;
-    strcpy(search_request + 1, filename);
-    
-    send(sockfd, search_request, filename_len, 0);
-    free(search_request);
-    
-    char response[10];
-    if (recv(sockfd, response, sizeof(response), 0) == -1) {
+
+    // Construct the search request
+    buf[0] = 2; // Action field for SEARCH request
+    strcpy(buf + 1, filename); // Copy filename into buffer, ensuring null termination
+
+    // Send the search request
+    int msg_len = 1 + strlen(filename) + 1; // 1 byte action + filename + NULL terminator
+    send(*s, buf, msg_len, 0);
+
+    // Receive the response
+    int received = recv(*s, buf, 10, 0); // Expecting a 10-byte response
+    if (received < 0) {
         perror("recv");
         return;
     }
-    
+
+    // Parse the response
     uint32_t peer_id, peer_ip;
     uint16_t peer_port;
-    memcpy(&peer_id, response, 4);
-    memcpy(&peer_ip, response + 4, 4);
-    memcpy(&peer_port, response + 8, 2);
-    
+    memcpy(&peer_id, buf, 4);
+    memcpy(&peer_ip, buf + 4, 4);
+    memcpy(&peer_port, buf + 8, 2);
+
     peer_id = ntohl(peer_id);
     peer_ip = ntohl(peer_ip);
     peer_port = ntohs(peer_port);
-    
+
+    // Check if file was found
     if (peer_id == 0 && peer_ip == 0 && peer_port == 0) {
         printf("File not indexed by registry\n");
     } else {
         struct in_addr ip_addr;
         ip_addr.s_addr = peer_ip;
-        printf("File found at\nPeer %u\n%s:%u\n", peer_id, inet_ntoa(ip_addr), peer_port);
+        char ip_str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &ip_addr, ip_str, INET_ADDRSTRLEN);
+
+        printf("File found at\n");
+        printf("Peer %u\n", peer_id);
+        printf("%s:%u\n", ip_str, peer_port);
     }
 }
 
