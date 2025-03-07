@@ -33,7 +33,7 @@ int lookup_and_connect(const char *host, const char *service);
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join(int *s, char *buf);
+void join(int *s, char *buf, uint32_t *peerID);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
@@ -62,16 +62,19 @@ void search(int *s, char *buf);
 
 int main(int argc, char *argv[]) {
 	char *host;
-	char *server_port;
+	int server_port;
+	uint32_t peerID;
 	char buf[MAX_SIZE];
 	int s;
 	int len;
     char userChoice;
 	bool hasJoined = false;
 
-	if ( argc == 3 ) {
+	if ( argc == 4 ) {
 		host = argv[1];
-		server_port = argv[2];
+		server_port = atoi(argv[2]);
+		peerID = atoi(argv[3]);
+		
 	}
 	else {
 		fprintf( stderr, "usage: %s host\n", argv[0] );
@@ -87,7 +90,7 @@ int main(int argc, char *argv[]) {
 		fprint("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(userChoice == "JOIN") {
-			join(s, buf);
+			join(s, buf, peerID);
 			continue;
 		}
 		else if (userChoice == "PUBLISH") {
@@ -120,7 +123,7 @@ int main(int argc, char *argv[]) {
 
 }
 
-void join(int *s, char *buf) {
+void join(int *s, char *buf, uint32_t *peerID) {
 	char userID[4];
 	buf[0] = '0';
 	// a 4 byte peer ID needs to be generated here and saved into buf[1] to buf[4]
