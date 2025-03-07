@@ -159,8 +159,7 @@ void publish(int *s, char *buf) {
 }
 
 void search(int *s, char *buf) {
-    char filename[100]; // Maximum file name size including NULL terminator
-
+    char filename[MAX_SIZE];
     printf("Enter a file name: ");
     scanf("%s", filename);
 
