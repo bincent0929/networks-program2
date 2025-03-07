@@ -35,6 +35,7 @@ int lookup_and_connect(const char *host, const char *service);
  * is provided by a command line argument
 */
 void join(int *s, char *buf, uint32_t *peerID);
+void join(int *s, char *buf, uint32_t *peerID);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
