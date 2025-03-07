@@ -158,8 +158,8 @@ void publish(int *s, char *buf) {
 	send(s, buf, 1200, 0);
 }
 
-void search(int sockfd) {
-    char filename[MAX_LINE];
+void search(int *s, char *buf) {
+    char filename[MAX_SIZE];
     printf("Enter a file name: ");
     scanf("%s", filename);
 
