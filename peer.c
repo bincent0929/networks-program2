@@ -1,4 +1,4 @@
-/** 
+/**
  * Group Members: Vincent Roberson and Muhammad I Sohail
  * ECEE 446 Section 1
  * Spring 2025
@@ -162,41 +162,45 @@ void search(int sockfd) {
     char filename[MAX_LINE];
     printf("Enter a file name: ");
     scanf("%s", filename);
-    
-    size_t filename_len = strlen(filename) + 2;
-    char *search_request = malloc(filename_len);
-    if (!search_request) {
-        perror("malloc");
-        return;
-    }
-    search_request[0] = 0x02;
-    strcpy(search_request + 1, filename);
-    
-    send(sockfd, search_request, filename_len, 0);
-    free(search_request);
-    
-    char response[10];
-    if (recv(sockfd, response, sizeof(response), 0) == -1) {
+
+    // Construct the search request
+    buf[0] = 2; // Action field for SEARCH request
+    strcpy(buf + 1, filename); // Copy filename into buffer, ensuring null termination
+
+    // Send the search request
+    int msg_len = 1 + strlen(filename) + 1; // 1 byte action + filename + NULL terminator
+    send(*s, buf, msg_len, 0);
+
+    // Receive the response
+    int received = recv(*s, buf, 10, 0); // Expecting a 10-byte response
+    if (received < 0) {
         perror("recv");
         return;
     }
-    
+
+    // Parse the response
     uint32_t peer_id, peer_ip;
     uint16_t peer_port;
-    memcpy(&peer_id, response, 4);
-    memcpy(&peer_ip, response + 4, 4);
-    memcpy(&peer_port, response + 8, 2);
-    
+    memcpy(&peer_id, buf, 4);
+    memcpy(&peer_ip, buf + 4, 4);
+    memcpy(&peer_port, buf + 8, 2);
+
     peer_id = ntohl(peer_id);
     peer_ip = ntohl(peer_ip);
     peer_port = ntohs(peer_port);
-    
+
+    // Check if file was found
     if (peer_id == 0 && peer_ip == 0 && peer_port == 0) {
         printf("File not indexed by registry\n");
     } else {
         struct in_addr ip_addr;
         ip_addr.s_addr = peer_ip;
-        printf("File found at\nPeer %u\n%s:%u\n", peer_id, inet_ntoa(ip_addr), peer_port);
+        char ip_str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &ip_addr, ip_str, INET_ADDRSTRLEN);
+
+        printf("File found at\n");
+        printf("Peer %u\n", peer_id);
+        printf("%s:%u\n", ip_str, peer_port);
     }
 }
 
