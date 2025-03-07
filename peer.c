@@ -74,7 +74,6 @@ int main(int argc, char *argv[]) {
 		host = argv[1];
 		server_port = atoi(argv[2]);
 		peerID = atoi(argv[3]);
-		
 	}
 	else {
 		fprintf( stderr, "usage: %s host\n", argv[0] );
