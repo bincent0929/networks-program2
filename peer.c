@@ -15,7 +15,8 @@
 // needed for the publish function
 #include <dirent.h>
 
-#define MAX_SIZE 1200
+#define MAX_SIZE 1200 // needs to be this large to storage the file names from publish
+
 
 /*
  * Lookup a host IP address and connect to it using service. Arguments match the first two
@@ -66,7 +67,6 @@ int main(int argc, char *argv[]) {
 	uint32_t peerID;
 	char buf[MAX_SIZE];
 	int s;
-	int len;
     char userChoice;
 	bool hasJoined = false;
 
@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
 		scanf("%s", userChoice);
 		if(userChoice == "JOIN") {
 			join(s, buf, peerID);
+			hasJoined = true;
 			continue;
 		}
 		else if (userChoice == "PUBLISH") {
@@ -137,7 +138,7 @@ void join(int *s, char *buf, uint32_t *peerID) {
 void publish(int *s, char *buf) {
 	uint32_t count = 0;
 	int fileNameOffset = 5;
-	
+
 	// Where I got this:
 	// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
 	DIR *d;
@@ -147,7 +148,7 @@ void publish(int *s, char *buf) {
 		count++;
 		// Where I go this
 		// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
-		strcpy(buf[fileNameOffset], dir->d_name);
+		strcpy(&buf[fileNameOffset], dir->d_name);
 		// dir->d_name is the current filename
 		fileNameOffset += strlen(dir->d_name);
 	}
