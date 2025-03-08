@@ -155,6 +155,7 @@ void publish(int *s, char *buf) {
 	closedir(d);
 
 	buf[0] = 1;
+	uint32_t net_count = htonl(count);
 	memcpy(buf + 1, &count, sizeof(uint32_t));
 	send(*s, buf, 1200, 0);
 }
