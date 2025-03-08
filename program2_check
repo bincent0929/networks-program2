@@ -1,0 +1,101 @@
+#!/usr/bin/env -S python3 -B
+
+import sys
+import random
+import common
+
+################### Defined constants ##################################
+# Filenames provided as part of the assignment and available while building
+# or executing. Should not be submitted to the script. Directories are
+# copied recursively.
+BASE_FILES = ['libnet_socket.a', 'net_socket.h']
+
+# Executable files provided as part of the assignment. Should not be
+# submitted to the script.
+BASE_EXECUTABLES = ['p2_registry']
+
+# All executables that must be generated during compilation.
+REQD_EXECUTABLES = ['peer']
+
+# The files published to the registry by virtual peers
+VIRTUAL_FILES1 = ['from.tgz', 'yes.txt', 'nope.txt']
+VIRTUAL_FILES2 = ['blank', 'something.pptx']
+
+def main():
+    do_debug = common.initial_setup(BASE_FILES, BASE_EXECUTABLES, REQD_EXECUTABLES)
+
+    REGISTRY_TIMEOUT = 2 # How long the registry waits for peer commands
+
+    SHARED_DIR = 'SharedFiles' # Directory of files PUBLISHed by peer
+
+    STUDENT_DIR = 'student' # Directory for student executables and files
+
+    NUM_PUBLISHED_FILES = random.randint(4, 9) # Number of files peer should PUBLISH
+
+    # Only one executable
+    student_exe = REQD_EXECUTABLES[0]
+
+    # Host running registry
+    host = 'localhost'
+
+    # Random TCP port number
+    port = common.get_random_port()
+
+    # The peer ID
+    student_peer_id = common.get_random_id()
+
+    registry_exe = 'p2_registry'
+
+    published_files = common.random_files(NUM_PUBLISHED_FILES)
+
+    files_to_search = common.random_files(1)
+    nonindexed_file = files_to_search[0]
+    files_to_search += random.sample(VIRTUAL_FILES1, random.randint(1, len(VIRTUAL_FILES1)))
+    files_to_search += random.sample(VIRTUAL_FILES2, random.randint(1, len(VIRTUAL_FILES2)))
+    random.shuffle(files_to_search)
+
+    try:
+        # Start the programs
+        common.banner('Starting registry and peer')
+        reg = common.start_registry(registry_exe, port, REGISTRY_TIMEOUT, soln=True, do_debug=do_debug)
+        student_peer = common.start_peer(student_exe, host, port, student_peer_id, \
+		    STUDENT_DIR, published_files, SHARED_DIR, soln=False, do_debug=do_debug)
+        if do_debug:
+            common.subbanner('WARNING: Debug output enabled. Program output may occur out of order.')
+
+        # Perform tests
+        common.student_perform_join(reg, student_peer, student_peer_id)
+
+        common.student_perform_publish(reg, student_peer, published_files)
+
+        for fname in files_to_search:
+            indexed = True
+            if fname == nonindexed_file:
+                indexed = False
+            common.student_perform_search(reg, student_peer, fname, indexed)
+
+        common.student_perform_exit(reg, student_peer)
+
+    except common.TestError as err:
+        common.perror(str(err))
+        sys.exit()
+    except (common.EndTestsException, common.AbnormalTerminationError, common.DuplicateCommandError, common.InvalidCommandError):
+        sys.exit()
+
+    common.banner('All tests passed.')
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nTests interrupted by user. Not all tests have completed.')
+        sys.exit()
+    except common.InternalError as err:
+        print(err)
+        sys.exit()
+    except Exception as err:
+        ierr = common.InternalError(f'Last chance except clause ({err})')
+        print(ierr)
+        sys.exit()
+
+# vim: set filetype=python:
