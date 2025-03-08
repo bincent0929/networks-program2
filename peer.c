@@ -150,7 +150,7 @@ void publish(int *s, char *buf) {
 		// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
 		strcpy(&buf[fileNameOffset], dir->d_name);
 		// dir->d_name is the current filename
-		fileNameOffset += strlen(dir->d_name);
+		fileNameOffset += strlen(dir->d_name) + 1;
 	}
 	closedir(d);
 
