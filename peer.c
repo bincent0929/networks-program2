@@ -145,6 +145,10 @@ void publish(int *s, char *buf) {
 	struct dirent *dir;
 	d = opendir("SharedFiles");
 	while ((dir = readdir(d)) != NULL) {
+		if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+        	continue;  // Skip these special directory entries
+    	}
+		
 		count++;
 		// Where I go this
 		// https://chatgpt.com/share/67c8abd2-5d50-800a-853f-55de0a46d0c1
