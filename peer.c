@@ -126,7 +126,8 @@ int main(int argc, char *argv[]) {
 void join(int *s, char *buf, uint32_t *peerID) {
 	buf[0] = 0;
 	// apparently a byte of 0 is the null character
-	memcpy(buf + 1, peerID, sizeof(uint32_t));
+	uint32_t net_peerID = htonl(*peerID);
+	memcpy(buf + 1, &net_peerID, sizeof(uint32_t));
 	/*
 		this should save the peerID given by the user
 		from buf[1] to buf[4]
