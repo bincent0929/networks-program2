@@ -34,7 +34,7 @@ int lookup_and_connect(const char *host, const char *service);
  * each peer ID must be unique and 
  * is provided by a command line argument
 */
-void join(int *s, char *buf, uint32_t *peerID);
+void join(const int *s, char *buf, const uint32_t *peerID);
 /**
  * Informs the registry of what files are available to share
  * opens, read, then counts the files in the "SharedFiles" directory
@@ -46,7 +46,7 @@ void join(int *s, char *buf, uint32_t *peerID);
  * no unused bytes between filenames
  * a publish cannot be larger than 1200 bytes (12 files)
 */
-void publish(int *s, char *buf);
+void publish(const int *s, char *buf);
 /**
  * look for peers with a desired filename
  * a request with the name of the file is sent from the peer
@@ -59,7 +59,7 @@ void publish(int *s, char *buf);
  * if the file is not found, then the response will contain zeros (or if the peer themself has the file)
  * user inputs the name of the file on a newline after SEARCH is entered
 */
-void search(int *s, char *buf);
+void search(const int *s, char *buf);
 
 int main(int argc, char *argv[]) {
 	char *host;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 
 }
 
-void join(int *s, char *buf, uint32_t *peerID) {
+void join(const int *s, char *buf, const uint32_t *peerID) {
 	buf[0] = 0;
 	// apparently a byte of 0 is the null character
 	uint32_t net_peerID = htonl(*peerID);
@@ -135,7 +135,7 @@ void join(int *s, char *buf, uint32_t *peerID) {
 	send(*s, buf, 5, 0);
 }
 
-void publish(int *s, char *buf) {
+void publish(const int *s, char *buf) {
 	uint32_t count = 0;
 	int fileNameOffset = 5;
 
@@ -163,9 +163,12 @@ void publish(int *s, char *buf) {
 	uint32_t net_count = htonl(count);
 	memcpy(buf + 1, &net_count, sizeof(uint32_t));
 	send(*s, buf, 1200, 0); // will this send with one send?
+	// there's a problem with this. somehow the first byte is being interpreted as a join
+	// even though it's set to 1 for the first byte
+	// I think we might need a partial send right here
 }
 
-void search(int *s, char *buf) {
+void search(const int *s, char *buf) {
     char filename[MAX_SIZE];
     printf("Enter a file name: ");
     scanf("%s", filename);
