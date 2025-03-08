@@ -14,6 +14,7 @@
 // for reading file names in a direcory
 // needed for the publish function
 #include <dirent.h>
+#include <arpa/inet.h>
 
 #define MAX_SIZE 1200 // needs to be this large to store the file names from publish
 
@@ -88,13 +89,13 @@ int main(int argc, char *argv[]) {
 		printf("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(strcmp(userChoice, "JOIN") == 0) {
-			join(s, buf, peerID);
+			join(&s, buf, &peerID);
 			hasJoined = true;
 			continue;
 		}
 		else if (strcmp(userChoice, "PUBLISH") == 0) {
 			if (hasJoined == true) {
-				publish(s, buf);
+				publish(&s, buf);
 				continue;
 			}
 			else {
@@ -104,7 +105,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if (strcmp(userChoice, "SEARCH") == 0) {
 			if (hasJoined == true) {
-				search(s, buf);
+				search(&s, buf);
 				continue;
 			}
 			else {
@@ -130,7 +131,7 @@ void join(int *s, char *buf, uint32_t *peerID) {
 		this should save the peerID given by the user
 		from buf[1] to buf[4]
 	*/
-	send(s, buf, 5, 0);
+	send(*s, buf, 5, 0);
 }
 
 void publish(int *s, char *buf) {
@@ -153,8 +154,8 @@ void publish(int *s, char *buf) {
 	closedir(d);
 
 	buf[0] = 1;
-	memcpy(buf + 1, count, sizeof(uint32_t));
-	send(s, buf, 1200, 0);
+	memcpy(buf + 1, &count, sizeof(uint32_t));
+	send(*s, buf, 1200, 0);
 }
 
 void search(int *s, char *buf) {
