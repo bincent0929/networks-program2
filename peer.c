@@ -141,7 +141,6 @@ void join(const int *s, char *buf, const uint32_t *peerID) {
 }
 
 void publish(const int *s, char *buf) {
-    memset(buf, 0, MAX_SIZE);
     buf[0] = 1;
 	uint32_t count = 0;
 	int fileNameOffset = 5;
