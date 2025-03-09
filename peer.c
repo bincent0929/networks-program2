@@ -89,8 +89,13 @@ int main(int argc, char *argv[]) {
 		printf("What would you like to do?: \n");
 		scanf("%s", userChoice);
 		if(strcmp(userChoice, "JOIN") == 0) {
+			if (hasJoined) {
+				printf("Error: Already joined the registry.\n");
+			} else {
+				printf("Joining the registry with Peer ID: %u\n", peerID);
 			join(&s, buf, &peerID);
 			hasJoined = true;
+			}
 			continue;
 		}
 		else if (strcmp(userChoice, "PUBLISH") == 0) {
@@ -136,6 +141,8 @@ void join(const int *s, char *buf, const uint32_t *peerID) {
 }
 
 void publish(const int *s, char *buf) {
+    memset(buf, 0, MAX_SIZE);
+    buf[0] = 1;
 	uint32_t count = 0;
 	int fileNameOffset = 5;
 
@@ -159,13 +166,13 @@ void publish(const int *s, char *buf) {
 	}
 	closedir(d);
 
-	buf[0] = 1;
 	uint32_t net_count = htonl(count);
 	memcpy(buf + 1, &net_count, sizeof(uint32_t));
-	send(*s, buf, 1200, 0); // will this send with one send?
-	// there's a problem with this. somehow the first byte is being interpreted as a join
-	// even though it's set to 1 for the first byte
-	// I think we might need a partial send right here
+    int send_size = fileNameOffset;
+    printf("Sending PUBLISH request: Action=%d, Count=%d, Total Size=%d\n", buf[0], count, send_size);
+    if (send(*s, buf, send_size, 0) == -1) {
+        perror("Error sending PUBLISH request");
+    }
 }
 
 void search(const int *s, char *buf) {
@@ -196,7 +203,6 @@ void search(const int *s, char *buf) {
     memcpy(&peer_port, buf + 8, 2);
 
     peer_id = ntohl(peer_id);
-    peer_ip = ntohl(peer_ip);
     peer_port = ntohs(peer_port);
 
     // Check if file was found
